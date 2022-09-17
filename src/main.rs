@@ -1,17 +1,23 @@
-use std::env;
 use reqwest::blocking::Client;
+use std::env;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Get url
     println!("Cheat.sh Helper");
-    let mut args: Vec<String> = env::args().collect();
-    args.remove(0);
-    let first_arg = args.get(0).unwrap().to_owned();
 
-    // Send http request and print result
-    let url = "https://cheat.sh/".to_string() + &first_arg;
-    let client = Client::new();
-    let resp = client.get(url).header("User-Agent", "curl/7.79.1").send()?.text()?;
-    println!("{}", resp);
+    let args: Vec<String> = env::args().collect();
+    if args.len() > 1 {
+        let url = "https://cheat.sh/".to_string() + &args[1];
+        let client = Client::new();
+        let resp = client
+            .get(url)
+            .header("User-Agent", "curl/7.79.1")
+            .send()?
+            .text()?;
+        println!("{}", resp);
+    } else {
+        eprintln!("Unable to find bash command\n");
+        println!("Usage:\nch [command]\nExample:\nch ls\nch cp");
+    }
+
     Ok(())
 }
